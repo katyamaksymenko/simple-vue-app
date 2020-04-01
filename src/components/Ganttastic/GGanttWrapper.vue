@@ -1,24 +1,52 @@
+<!-- use Playground.vue to play around with the gantt chart components and test out new features -->
 <template>
-  <div id="app">
-    <div>
-      <Wrapper />
-    </div>
+  <div>
+    <g-gantt-chart
+        :chart-start="chartStart"
+        :chart-end="chartEnd"
+        :grid="grid"
+        :hide-timeaxis="hideTimeaxis"
+        :push-on-overlap="false"
+        snap-back-on-overlap
+        :highlighted-hours="highlightedHours"
+        :row-label-width="`${rowLabelWidth}%`"
+        :row-height="rowHeight"
+        :theme="selectedTheme"
+      >
+        <template v-for="row in rowList">
+          <div style="width: 100%; padding: 5px; background: white;" :key="`div${row.label}`">
+            test
+          </div>
+          <g-gantt-row 
+            :key="row.label"
+            :label="row.label"
+            :bars="row.barList"
+            :highlight-on-hover="highlightOnHover"
+            bar-start="myStart"
+            bar-end="myEnd"
+          >
+            <template #bar-label="{bar}">
+              <span>{{bar.label}}</span>
+            </template>
+          </g-gantt-row>
+        </template>
+      </g-gantt-chart>
   </div>
 </template>
 
 <script>
-import Wrapper from './components/Ganttastic/GGanttWrapper.vue'
+import GGanttChart from './GGanttChart.vue'
+import GGanttRow from './GGanttRow.vue'
 
 export default {
-  name: 'App',
-  components: {
-    Wrapper,
-    
+  components:{
+    GGanttChart,
+    GGanttRow
   },
-    data(){
+  data(){
     return {
       chartStart: "2020-03-02 00:00",
-      chartEnd: "2020-03-05 00:00",
+      chartEnd: "2020-03-04 00:00",
       pushOnOverlap: true,
       grid: true,
       rowHeight: 40,
@@ -63,6 +91,7 @@ export default {
             }
           ]
         },
+
         {
           label: "Row #2",
           barList: [
@@ -87,6 +116,7 @@ export default {
             }
           ]
         },
+
         {
           label: "Row #3",
           barList: [
@@ -116,6 +146,7 @@ export default {
             }, 
           ]
         },
+
         {
           label: "Row #4",
           barList: [
@@ -133,19 +164,13 @@ export default {
             }, 
           ]
         }
+
       ]
     }
-  }
+  },
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
