@@ -18,7 +18,9 @@
           <div style="width: 100%; padding: 5px; background: white;" :key="`div${row.label}`">
             test
           </div>
-          <g-gantt-row v-on:show-task-form="showTaskForm(index)"
+          <g-gantt-row
+            v-on:show-task-form="showTaskForm(index)"
+            v-on:edit-task="showEditTaskForm($event, index)"
             :index="index"
             :key="row.label"
             :label="row.label"
@@ -37,7 +39,8 @@
       <g-gantt-task-form
         v-if="isShowTaskForm"
         v-on:add-task="addTask"
-        :index="rowIndex"
+        :rowIndex="rowIndex"
+        :task="task"
       ></g-gantt-task-form>
   </div>
 </template>
@@ -46,28 +49,44 @@
 import GGanttChart from './GGanttChart.vue'
 import GGanttRow from './GGanttRow.vue'
 import GGanttTaskForm from './GGanttEventForm.vue'
-
 export default {
   components:{
     GGanttChart,
     GGanttRow,
     GGanttTaskForm
   },
+  mounted() {
+    if (localStorage.rowList) {
+      this.rowList = JSON.parse(localStorage.rowList);
+    }
+  },
+  watch: {
+    rowList: {
+      handler: function (newRowList) { localStorage.rowList = JSON.stringify(newRowList) },
+      deep: true
+    }
+  },
   methods: {
-    addTask(index, data) {
-      this.rowList[index].barList.push(data);
+    addTask(rowIndex, data) {
+      this.rowList[rowIndex].barList.push(data);
       this.isShowTaskForm = false;
       this.rowIndex = null;
+      this.taskIndex = null;
     },
-    showTaskForm(index) {
+    showTaskForm(rowIndex) {
       this.isShowTaskForm = true;
-      this.rowIndex = index;
+      this.rowIndex = rowIndex;
+    },
+    showEditTaskForm(taskIndex, rowIndex) {
+      this.showTaskForm(rowIndex);
+      this.task = this.rowList[rowIndex].barList[taskIndex];
     }
   },
   data(){
     return {
       isShowTaskForm: false,
       rowIndex: null,
+      task: null,
       chartStart: "2020-03-02 00:00",
       chartEnd: "2020-03-04 00:00",
       pushOnOverlap: true,
@@ -96,105 +115,25 @@ export default {
         "fuchsia",
         "flare"
       ],
-
       rowList: [
         {
           label: "Row #1",
-          barList: [
-            {
-              myStart: "2020-03-03 18:00",
-              myEnd: "2020-03-03 23:00",
-              label: "Immobile",
-              ganttBarConfig: {color:"white", backgroundColor: "#404040", opacity: 0.5, immobile: true}
-            },
-            {
-              myStart: "2020-03-03 04:00",
-              myEnd: "2020-03-03 15:00",
-              label: "Bar",
-              ganttBarConfig: {color:"white", backgroundColor: "#2e74a3", bundle: "blueBundle"}
-            }
-          ]
+          barList: []
         },
-
         {
           label: "Row #2",
-          barList: [
-            {
-              myStart: "2020-03-02 09:00",
-              myEnd: "2020-03-02 18:00",
-              image: "vue_ganttastic_logo_no_text.png",
-              label: "I have an image",
-              ganttBarConfig: {color:"white", backgroundColor: "#de3b26", bundle:"redBundle"}
-            },
-            {
-              myStart: "2020-03-03 04:00",
-              myEnd: "2020-03-03 15:00",
-              label: "We belong together ^",
-              ganttBarConfig: {color:"white", backgroundColor: "#2e74a3", bundle:"blueBundle"}
-            },
-            {
-              myStart: "2020-03-03 18:00",
-              myEnd: "2020-03-03 22:00",
-              label: "Bar",
-              ganttBarConfig: {color:"white", backgroundColor: "#aa34a3"}
-            }
-          ]
+          barList: []
         },
-
         {
           label: "Row #3",
-          barList: [
-            {
-              myStart: "2020-03-02 09:00",
-              myEnd: "2020-03-02 18:00",
-              label: "I am with stupid ^",
-              ganttBarConfig: {color:"white", backgroundColor: "#de3b26", bundle: "redBundle"}
-            },
-            {
-              myStart: "2020-03-02 22:30",
-              myEnd: "2020-03-03 05:00",
-              label: "With handles!",
-              ganttBarConfig: {color:"white", backgroundColor: "#a23def", handles: true}
-            },
-            {
-              myStart: "2020-03-02 01:00",
-              myEnd: "2020-03-02 07:00",
-              label: "Bar",
-              ganttBarConfig: {color:"white", backgroundColor: "#5effad"}
-            },
-            {
-              myStart: "2020-03-03 14:00",
-              myEnd: "2020-03-03 20:00",
-              label: "Woooow!",
-              ganttBarConfig: {color:"white", background: "repeating-linear-gradient(45deg,#de7359,#de7359 10px,#ffc803 10px,#ffc803 20px)"}
-            }, 
-          ]
+          barList: []
         },
-
         {
           label: "Row #4",
-          barList: [
-            {
-              myStart: "2020-03-03 06:30",
-              myEnd: "2020-03-03 20:00",
-              label: "Bar",
-              ganttBarConfig:{color:"white", backgroundColor: "#d18aaf", handles: true}
-            },
-            {
-              myStart: "2020-03-02 00:30",
-              myEnd: "2020-03-03 01:00",
-              label: "Rectangular",
-              ganttBarConfig: {color:"white", backgroundColor: "#f2840f", borderRadius: 0}
-            }, 
-          ]
+          barList: []
         }
-
       ]
     }
   }
 }
 </script>
-
-<style>
-
-</style>

@@ -7,7 +7,7 @@
       @mouseenter.stop="onMouseenter($event)"
       @mouseleave.stop ="onMouseleave($event)"
       @mousedown.stop="onMousedown($event)"
-      @dblclick="onDblclick($event)"
+      @dblclick="$emit('edit-task', index)"
       @contextmenu="onContextmenu($event)"
     >
       <div class="g-gantt-bar-label">
@@ -50,6 +50,7 @@ export default {
   name: "GGanttBar",
 
   props:{
+    index: {type: Number, required: true},
     bar: {type: Object},
     barStart: {type: String}, // property name of the bar objects that represents the start datetime
     barEnd: {type: String}, // property name of the bar objects that represents the end datetime,
