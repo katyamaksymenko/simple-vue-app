@@ -1,31 +1,36 @@
 <template>
-  <div 
-    id="g-gantt-chart"
-    :style="{width: width, background: themeColors.background}"
-  >
-    <g-gantt-timeaxis
-      v-if="!hideTimeaxis"
-      :chart-start="chartStart"
-      :chart-end="chartEnd"
-      :row-label-width="rowLabelWidth"
-      :timemarker-offset="timemarkerOffset"
-      :theme-colors="themeColors"
-      :locale="locale"
-    />
+    <div>
+        <div 
+          id="g-gantt-chart"
+          :style="{width: width, background: themeColors.background}"
+        >
+            <g-gantt-timeaxis
+              v-if="!hideTimeaxis"
+              :chart-start="chartStart"
+              :chart-end="chartEnd"
+              :row-label-width="rowLabelWidth"
+              :timemarker-offset="timemarkerOffset"
+              :theme-colors="themeColors"
+              :locale="locale"
+            />
 
-    <g-gantt-grid 
-      v-if="grid"
-      :chart-start="chartStart"
-      :chart-end="chartEnd"
-      :row-label-width="rowLabelWidth"
-      :highlighted-hours="highlightedHours"
-    />
-    
-    <div id="g-gantt-rows-container">
-      <slot/>   <!-- the g-gantt-row components go here -->
+            <g-gantt-grid 
+              v-if="grid"
+              :chart-start="chartStart"
+              :chart-end="chartEnd"
+              :row-label-width="rowLabelWidth"
+              :highlighted-hours="highlightedHours"
+            />
+        
+            <div id="g-gantt-rows-container" v-on:show-event-form="addForm($event)">
+                <slot/>   <!-- the g-gantt-row components go here -->
+            </div>
+      </div>
+
+      <GGanttEventForm v-if="isShowEventForm"></GGanttEventForm>  
+
     </div>
-    
-  </div>
+
 </template>
 
 <script>
@@ -35,6 +40,7 @@ import GGanttTimeaxis from './GGanttTimeaxis.vue'
 import GGanttGrid from './GGanttGrid.vue'
 import GGanttRow from './GGanttRow.vue'
 import GGanttBar from './GGanttBar.vue'
+import GGanttEventForm from './GGanttEventForm.vue'
 
 export default {
 
@@ -42,7 +48,8 @@ export default {
 
   components:{
     GGanttTimeaxis,
-    GGanttGrid
+    GGanttGrid,
+    GGanttEventForm
   },
 
   props:{
@@ -63,7 +70,8 @@ export default {
   data(){
     return{
       timemarkerOffset: 0,
-      movedBarsInDrag: new Set()
+      movedBarsInDrag: new Set(),
+      isShowEventForm: false
     }
   },
 
@@ -92,7 +100,13 @@ export default {
   },
 
   methods: {
-
+    addEvent(data) {
+      console.log(data);
+    },
+    showEventForm(index) {
+      console.log(index);
+      this.isShowEventForm = true;
+    },
     getBarsFromBundle(bundleId){
       if(bundleId === undefined || bundleId === null){
         return []

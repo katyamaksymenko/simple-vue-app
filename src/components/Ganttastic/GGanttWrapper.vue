@@ -1,6 +1,7 @@
 <!-- use Playground.vue to play around with the gantt chart components and test out new features -->
 <template>
   <div>
+   
     <g-gantt-chart
         :chart-start="chartStart"
         :chart-end="chartEnd"
@@ -13,11 +14,12 @@
         :row-height="rowHeight"
         :theme="selectedTheme"
       >
-        <template v-for="row in rowList">
+        <template v-for="(row, index) in rowList">
           <div style="width: 100%; padding: 5px; background: white;" :key="`div${row.label}`">
             test
           </div>
-          <g-gantt-row 
+          <g-gantt-row v-on:show-task-form="showTaskForm(index)"
+            :index="index"
             :key="row.label"
             :label="row.label"
             :bars="row.barList"
@@ -30,21 +32,42 @@
             </template>
           </g-gantt-row>
         </template>
+        
       </g-gantt-chart>
+      <g-gantt-task-form
+        v-if="isShowTaskForm"
+        v-on:add-task="addTask"
+        :index="rowIndex"
+      ></g-gantt-task-form>
   </div>
 </template>
 
 <script>
 import GGanttChart from './GGanttChart.vue'
 import GGanttRow from './GGanttRow.vue'
+import GGanttTaskForm from './GGanttEventForm.vue'
 
 export default {
   components:{
     GGanttChart,
-    GGanttRow
+    GGanttRow,
+    GGanttTaskForm
+  },
+  methods: {
+    addTask(index, data) {
+      this.rowList[index].barList.push(data);
+      this.isShowTaskForm = false;
+      this.rowIndex = null;
+    },
+    showTaskForm(index) {
+      this.isShowTaskForm = true;
+      this.rowIndex = index;
+    }
   },
   data(){
     return {
+      isShowTaskForm: false,
+      rowIndex: null,
       chartStart: "2020-03-02 00:00",
       chartEnd: "2020-03-04 00:00",
       pushOnOverlap: true,
@@ -73,6 +96,7 @@ export default {
         "fuchsia",
         "flare"
       ],
+
       rowList: [
         {
           label: "Row #1",
@@ -167,7 +191,7 @@ export default {
 
       ]
     }
-  },
+  }
 }
 </script>
 

@@ -1,4 +1,5 @@
 <template>
+
   <div
     class="g-gantt-row"
     ref="g-gantt-row"
@@ -11,6 +12,11 @@
       <slot name="label">
         {{label}}
       </slot>
+       <button
+        v-on:click="$emit('show-task-form')"
+        style="width: 100px; height: 30px;">
+        add event
+      </button>
     </div>
     <div 
       class="g-gantt-row-bars-container"
